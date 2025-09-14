@@ -10,8 +10,8 @@
     --card-foreground: 220 15% 25%;
     --popover: 210 20% 98%; /* Keep popovers slightly brighter */
     --popover-foreground: 220 15% 25%;
-    --primary: 210 90% 55%; /* Electric Blue */
-    --primary-foreground: 210 100% 98%;
+    --primary: 230 14% 13%; /* New primary color */
+    --primary-foreground: 210 20% 98%;
     --secondary: 210 10% 85%;
     --secondary-foreground: 220 15% 20%;
     --muted: 210 10% 85%;
@@ -23,7 +23,7 @@
     --info: 190 81% 54%; /* Cyan Blue */
     --border: 220 10% 60%;
     --input: 220 10% 50%;
-    --ring: 210 90% 60%; /* Electric Blue for ring */
+    --ring: 230 14% 13%; /* Ring color to match new primary */
     --radius: 0.5rem;
 
     /* Chart Colors (Industrial) */
@@ -41,8 +41,8 @@
     --card-foreground: 210 20% 88%;
     --popover: 220 15% 15%;
     --popover-foreground: 210 20% 88%;
-    --primary: 210 90% 55%; /* Electric Blue */
-    --primary-foreground: 210 100% 98%;
+    --primary: 230 14% 13%; /* New primary color */
+    --primary-foreground: 210 20% 98%;
     --secondary: 210 10% 35%;
     --secondary-foreground: 210 20% 88%;
     --muted: 210 10% 35%;
@@ -54,7 +54,7 @@
     --info: 190 81% 54%; /* Cyan Blue */
     --border: 210 10% 40%;
     --input: 210 10% 30%;
-    --ring: 210 90% 60%; /* Electric Blue for ring */
+    --ring: 230 14% 13%; /* Ring color to match new primary */
     
     /* Chart Colors (Industrial) */
     --chart-1: 210 90% 55%; /* Electric Blue */
