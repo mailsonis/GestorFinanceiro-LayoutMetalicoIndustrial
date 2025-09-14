@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 10% 88%; /* Darker light gray for less brightness */
+    --foreground: 220 15% 20%;
+    --card: 220 10% 92%; /* Darker card background */
+    --card-foreground: 220 15% 25%;
+    --popover: 210 20% 98%; /* Keep popovers slightly brighter */
+    --popover-foreground: 220 15% 25%;
+    --primary: 210 90% 55%; /* Electric Blue */
+    --primary-foreground: 210 100% 98%;
+    --secondary: 210 10% 85%;
+    --secondary-foreground: 220 15% 20%;
+    --muted: 210 10% 85%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 120 40% 45%; /* Military Green */
+    --accent-foreground: 210 100% 98%;
+    --destructive: 0 70% 55%; /* Brighter Red for destructive actions */
+    --destructive-foreground: 210 100% 98%;
+    --info: 190 81% 54%; /* Cyan Blue */
+    --border: 220 10% 60%;
+    --input: 220 10% 50%;
+    --ring: 210 90% 60%; /* Electric Blue for ring */
+    --radius: 0.5rem;
+
+    /* Chart Colors (Industrial) */
+    --chart-1: 210 90% 55%; /* Electric Blue */
+    --chart-2: 0 70% 55%;   /* Brighter Red */
+    --chart-3: 120 40% 45%; /* Military Green */
+    --chart-4: 50 80% 55%;  /* Matte Yellow */
+    --chart-5: 30 70% 50%; /* Rust Orange/Red */
+  }
+
+  .dark {
+    --background: 220 15% 15%; /* Dark Charcoal */
+    --foreground: 210 20% 85%;
+    --card: 220 10% 23%; /* Dark Slate Gray for card background */
+    --card-foreground: 210 20% 88%;
+    --popover: 220 15% 15%;
+    --popover-foreground: 210 20% 88%;
+    --primary: 210 90% 55%; /* Electric Blue */
+    --primary-foreground: 210 100% 98%;
+    --secondary: 210 10% 35%;
+    --secondary-foreground: 210 20% 88%;
+    --muted: 210 10% 35%;
+    --muted-foreground: 210 15% 65%;
+    --accent: 120 40% 45%; /* Military Green */
+    --accent-foreground: 210 100% 98%;
+    --destructive: 0 70% 55%; /* Brighter Red for destructive actions */
+    --destructive-foreground: 210 100% 98%;
+    --info: 190 81% 54%; /* Cyan Blue */
+    --border: 210 10% 40%;
+    --input: 210 10% 30%;
+    --ring: 210 90% 60%; /* Electric Blue for ring */
+    
+    /* Chart Colors (Industrial) */
+    --chart-1: 210 90% 55%; /* Electric Blue */
+    --chart-2: 0 70% 55%;   /* Brighter Red */
+    --chart-3: 120 40% 45%; /* Military Green */
+    --chart-4: 50 80% 55%;  /* Matte Yellow */
+    --chart-5: 30 70% 50%; /* Rust Orange/Red */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.05));
+  }
+  .dark body {
+    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1));
+  }
+}
+
+@layer components {
+  .dark .industrial-card {
+    @apply relative border-2 border-slate-600/80 bg-gradient-to-b from-slate-700 to-slate-800;
+  }
+  
+  .industrial-card {
+    @apply relative border-2 border-slate-400/80 bg-gradient-to-b from-slate-200 to-slate-300;
+  }
+
+  .dark .card-screw {
+     @apply absolute w-3 h-3 text-slate-500/80;
+  }
+  .card-screw {
+    @apply absolute w-3 h-3 text-slate-600/70;
+  }
+
+  .card-screw-tl { @apply top-2 left-2; }
+  .card-screw-tr { @apply top-2 right-2; }
+  .card-screw-bl { @apply bottom-2 left-2; }
+  .card-screw-br { @apply bottom-2 right-2; }
+}
