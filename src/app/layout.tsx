@@ -53,9 +53,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Gestor Financeiro" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#388E3C" />
+        <meta name="msapplication-TileColor" content="#1E2028" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#388E3C" />
+        <meta name="theme-color" content="#1E2028" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" /> 
         {/* Ensure you have an icon at public/icons/apple-touch-icon-180x180.png */}
       </head>
