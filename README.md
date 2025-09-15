@@ -35,7 +35,7 @@ Despesas**.\
 
   Tema Claro                         Tema Escuro
   ---------------------------------- ----------------------------------
-  ![Login Claro](.img/LoginWhite.jpg)   ![Login Escuro](.img/LoginDark.jpg)
+  ![Login Claro](./img/LoginWhite.jpg)   ![Login Escuro](./img/LoginDark.jpg)
 
 ### 📊 Dashboard
 
@@ -43,7 +43,7 @@ Despesas**.\
   Tema Claro                         Tema Escuro
   ---------------------------------- ------------------------------------
   ![Dashboard                        ![Dashboard
-  Claro](.img/DashboardWhite.jpg)       Escuro](.img/DashboardDark.jpg)
+  Claro](./img/DashboardWhite.jpg)       Escuro](./img/DashboardDark.jpg)
 
   -----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ Despesas**.\
   Tema Claro                         Tema Escuro
   ---------------------------------- ------------------------------------
   ![Nova Transação                   ![Nova Transação
-  Claro](.img/NovaTransaçãoWhite.jpg)   Escuro](.img/NovaTransaçãoDark.jpg)
+  Claro](./img/NovaTransaçãoWhite.jpg)   Escuro](./img/NovaTransaçãoDark.jpg)
 
   -----------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ Despesas**.\
   Tema Claro                         Tema Escuro
   ---------------------------------- ------------------------------------
   ![Categorias                       ![Categorias
-  Claro](.img/CategWhite.jpg)           Escuro](.img/CategDark.jpg)
+  Claro](./img/CategWhite.jpg)           Escuro](./img/CategDark.jpg)
 
   -----------------------------------------------------------------------
 
