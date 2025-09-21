@@ -442,6 +442,7 @@ export default function DashboardPage() {
             onDayChange={handleDayChange}
             currentSelectedMonth={selectedMonth}
             currentSelectedYear={selectedYear}
+            currentSelectedDay={selectedDay}
             centerMobileContent={manageCategoriesButtonMobile}
             showMobileGlobalControls={true} 
         />
@@ -456,6 +457,7 @@ export default function DashboardPage() {
               onDayChange={handleDayChange}
               currentSelectedMonth={selectedMonth}
               currentSelectedYear={selectedYear}
+              currentSelectedDay={selectedDay}
               showMobileGlobalControls={false}
             />
             {mounted && (

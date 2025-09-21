@@ -42,6 +42,7 @@ interface MonthNavigationProps {
   onDayChange: (day: Date) => void;
   currentSelectedMonth?: string;
   currentSelectedYear?: number;
+  currentSelectedDay?: Date | null;
   centerMobileContent?: ReactNode; 
   showMobileGlobalControls?: boolean; // Controls visibility of theme/admin/logout on mobile
 }
@@ -51,6 +52,7 @@ export function MonthNavigation({
   onDayChange,
   currentSelectedMonth,
   currentSelectedYear,
+  currentSelectedDay,
   centerMobileContent,
   showMobileGlobalControls = true, 
 }: MonthNavigationProps) {
@@ -236,7 +238,7 @@ export function MonthNavigation({
             <Calendar
               mode="single"
               locale={ptBR}
-              selected={selectedDate}
+              selected={currentSelectedDay || undefined}
               onSelect={handleDateSelect}
               defaultMonth={selectedDate}
               onMonthChange={handleMonthSelect} 
@@ -270,7 +272,7 @@ export function MonthNavigation({
           <Calendar
             mode="single"
             locale={ptBR}
-            selected={selectedDate}
+            selected={currentSelectedDay || undefined}
             onSelect={handleDateSelect}
             defaultMonth={selectedDate}
             onMonthChange={handleMonthSelect}
