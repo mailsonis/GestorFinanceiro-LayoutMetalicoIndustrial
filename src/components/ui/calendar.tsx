@@ -35,7 +35,10 @@ function Calendar({
         caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium hidden",
         caption_dropdowns: "flex justify-center gap-1",
-        nav: "space-x-1 flex items-center",
+        nav: cn(
+          "space-x-1 flex items-center",
+          props.captionLayout === "dropdown-buttons" && "hidden"
+        ),
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
@@ -65,8 +68,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: () => null,
-        IconRight: () => null,
+        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+        IconRight: () => <ChevronRight className="h-4 w-4" />,
         Dropdown: ({ value, onChange, children, ...props }: DropdownProps) => {
           const options = React.Children.toArray(
             children
