@@ -25,6 +25,7 @@ import {
   deleteCategory,
   type StoredTransaction,
   type StoredCategory,
+  deleteFutureInstallments,
 } from '@/firebase/services/firestoreService';
 import { TransactionList, type Transaction as DisplayTransaction } from '@/components/finances/transaction-list';
 import { AddTransactionModal, type TransactionFormData } from '@/components/finances/add-transaction-modal';
@@ -53,6 +54,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
+import { DeleteInstallmentDialog } from '@/components/finances/delete-installment-dialog';
 
 
 const mapStoredToDisplayTransaction = (st: StoredTransaction): DisplayTransaction => ({
@@ -151,9 +153,10 @@ export default function DashboardPage() {
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<DisplayTransaction | null>(null);
-  const [transactionIdToDelete, setTransactionIdToDelete] = useState<string | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = useState<DisplayTransaction | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isTransactionListVisible, setIsTransactionListVisible] = useState(true);
+  const [isInstallmentDeleteModalOpen, setIsInstallmentDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -357,15 +360,21 @@ export default function DashboardPage() {
     }
   };
 
-  const handleOpenDeleteConfirm = (transactionId: string) => {
-    setTransactionIdToDelete(transactionId);
-    setIsDeleteConfirmOpen(true);
+  const handleOpenDeleteConfirm = (transaction: DisplayTransaction) => {
+    setTransactionToDelete(transaction);
+    const isInstallment = /\(\d+\/\d+\)$/.test(transaction.description);
+
+    if (isInstallment) {
+      setIsInstallmentDeleteModalOpen(true);
+    } else {
+      setIsDeleteConfirmOpen(true);
+    }
   };
 
   const handleConfirmDelete = async () => {
-    if (!user || !transactionIdToDelete) return;
+    if (!user || !transactionToDelete) return;
     try {
-      await deleteTransaction(user.uid, transactionIdToDelete);
+      await deleteTransaction(user.uid, transactionToDelete.id);
       if (selectedMonth && selectedYear) {
         await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
@@ -374,14 +383,38 @@ export default function DashboardPage() {
       console.error("Error deleting transaction:", error);
       toast({ title: "Erro ao Excluir Movimentação", variant: "destructive" });
     } finally {
-      setTransactionIdToDelete(null);
+      setTransactionToDelete(null);
       setIsDeleteConfirmOpen(false);
     }
   };
 
+  const handleConfirmDeleteInstallments = async (deleteType: 'single' | 'future') => {
+    if (!user || !transactionToDelete) return;
+
+    try {
+        if (deleteType === 'single') {
+            await deleteTransaction(user.uid, transactionToDelete.id);
+            toast({ title: "Parcela Excluída" });
+        } else {
+            await deleteFutureInstallments(user.uid, transactionToDelete);
+            toast({ title: "Parcelas futuras excluídas com sucesso" });
+        }
+        if (selectedMonth && selectedYear) {
+            await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
+        }
+    } catch (error) {
+        console.error("Error deleting installment transaction:", error);
+        toast({ title: "Erro ao Excluir Parcela(s)", variant: "destructive" });
+    } finally {
+        setTransactionToDelete(null);
+        setIsInstallmentDeleteModalOpen(false);
+    }
+};
+
   const handleCancelDelete = () => {
-    setTransactionIdToDelete(null);
+    setTransactionToDelete(null);
     setIsDeleteConfirmOpen(false);
+    setIsInstallmentDeleteModalOpen(false);
   };
 
   const manageCategoriesButtonMobile = (
@@ -602,6 +635,15 @@ export default function DashboardPage() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+    
+    <DeleteInstallmentDialog
+        isOpen={isInstallmentDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDeleteInstallments}
+        transactionDescription={transactionToDelete?.description ?? ''}
+    />
     </>
   );
 }
+
+    

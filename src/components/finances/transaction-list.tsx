@@ -37,7 +37,7 @@ interface TransactionListProps {
   transactions: Transaction[];
   categories: StoredCategory[];
   onEdit: (transaction: Transaction) => void;
-  onDelete: (transactionId: string) => void;
+  onDelete: (transaction: Transaction) => void;
   isPrinting?: boolean;
 }
 
@@ -60,7 +60,7 @@ export function TransactionList({ transactions, categories, onEdit, onDelete, is
     return (
       <Card industrial>
         <CardContent className="p-6 text-center text-muted-foreground">
-          <p className="text-lg">Nenhuma movimentação encontrada para este mês.</p>
+          <p className="text-lg">Nenhuma movimentação encontrada para este período.</p>
           <p>Adicione uma nova movimentação para começar.</p>
         </CardContent>
       </Card>
@@ -162,7 +162,7 @@ export function TransactionList({ transactions, categories, onEdit, onDelete, is
                                 <Edit className="mr-2 h-4 w-4" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onSelect={() => onDelete(transaction.id)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                              <DropdownMenuItem onSelect={() => onDelete(transaction)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Excluir
                               </DropdownMenuItem>
@@ -182,7 +182,7 @@ export function TransactionList({ transactions, categories, onEdit, onDelete, is
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              onClick={() => onDelete(transaction.id)} 
+                              onClick={() => onDelete(transaction)} 
                               className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8" 
                               aria-label="Excluir movimentação"
                             >
@@ -201,3 +201,5 @@ export function TransactionList({ transactions, categories, onEdit, onDelete, is
     </Card>
   );
 }
+
+    

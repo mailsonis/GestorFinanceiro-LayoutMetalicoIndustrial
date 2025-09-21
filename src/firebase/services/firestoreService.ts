@@ -19,7 +19,7 @@ import {
 } from 'firebase/firestore';
 import type { TransactionFormData } from '@/components/finances/add-transaction-modal';
 import type { Category as CategoryData } from '@/components/finances/manage-categories-modal';
-import { formatISO } from 'date-fns';
+import { formatISO, parseISO as dateFnsParseISO } from 'date-fns';
 import { addMonths } from 'date-fns/addMonths';
 
 // Types adjusted for Firestore
@@ -261,6 +261,43 @@ export const deleteTransaction = async (userId: string, transactionId: string): 
   const transactionDoc = doc(db, `users/${userId}/transactions`, transactionId);
   await deleteDoc(transactionDoc);
 };
+
+export const deleteFutureInstallments = async (userId: string, currentTransaction: StoredTransaction): Promise<void> => {
+  const match = currentTransaction.description.match(/^(.*)\s\((\d+)\/(\d+)\)$/);
+  if (!match) {
+    // Not an installment, fallback to single delete
+    await deleteTransaction(userId, currentTransaction.id);
+    return;
+  }
+
+  const baseDescription = match[1];
+  const currentInstallmentNumber = parseInt(match[2], 10);
+
+  const transactionsCollection = getTransactionsCollection(userId);
+  const q = query(
+    transactionsCollection,
+    where('userId', '==', userId),
+    where('description', '>=', `${baseDescription} (${currentInstallmentNumber}/`),
+    where('description', '<=', `${baseDescription} (999/999)`) // Assuming max 999 installments
+  );
+
+  const snapshot = await getDocs(q);
+  const batch = writeBatch(db);
+
+  snapshot.docs.forEach(document => {
+    const docData = document.data() as StoredTransaction;
+    const docMatch = docData.description.match(/\((\d+)\/\d+\)$/);
+    if (docMatch) {
+      const installmentNumber = parseInt(docMatch[1], 10);
+      if (docData.description.startsWith(baseDescription) && installmentNumber >= currentInstallmentNumber) {
+        batch.delete(document.ref);
+      }
+    }
+  });
+
+  await batch.commit();
+};
+
 
 export const getDefaultCategories = (): Omit<StoredCategory, 'id' | 'userId'>[] => {
   return [
