@@ -39,6 +39,7 @@ const months = [
 
 interface MonthNavigationProps {
   onMonthChange: (month: string, year: number) => void;
+  onDayChange: (day: Date) => void;
   currentSelectedMonth?: string;
   currentSelectedYear?: number;
   centerMobileContent?: ReactNode; 
@@ -47,6 +48,7 @@ interface MonthNavigationProps {
 
 export function MonthNavigation({ 
   onMonthChange, 
+  onDayChange,
   currentSelectedMonth,
   currentSelectedYear,
   centerMobileContent,
@@ -120,13 +122,14 @@ export function MonthNavigation({
   
   const handleDateSelect = (date: Date | undefined) => {
     if(date){
-      setSelectedDate(startOfMonth(date)); // Always set to the start of the month
-      setIsCalendarOpen(false); // Close popover on selection
+      onDayChange(date);
+      // We don't close calendar so user can see selection
+      // setIsCalendarOpen(false); 
     }
   };
    
   const handleMonthSelect = (date: Date) => {
-    setSelectedDate(startOfMonth(date)); // Also ensure month change sets to the start
+    setSelectedDate(startOfMonth(date)); // This will trigger onMonthChange effect
   };
   
   const handlePreviousMonth = () => {

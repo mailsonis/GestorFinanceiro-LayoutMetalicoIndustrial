@@ -193,13 +193,22 @@ export const addTransaction = async (userId: string, transactionData: Transactio
 };
 
 
-export const getTransactions = async (userId: string, month?: string, year?: number, limit?: number): Promise<StoredTransaction[]> => {
+export const getTransactions = async (
+  userId: string, 
+  month?: string, 
+  year?: number, 
+  limit?: number,
+  day?: Date | null
+): Promise<StoredTransaction[]> => {
   const collRef = getTransactionsCollection(userId);
   const constraints = [];
 
   constraints.push(where('userId', '==', userId));
 
-  if (month && year) {
+  if (day) {
+    const specificDate = formatISO(day, { representation: 'date' });
+    constraints.push(where('date', '==', specificDate));
+  } else if (month && year) {
     const monthIndex = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'].indexOf(month);
     if (monthIndex === -1) return []; 
 

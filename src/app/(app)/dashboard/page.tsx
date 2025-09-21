@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { LayoutDashboard, LogOut, Moon, Settings, Sun, DollarSign, Shapes, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, LogOut, Moon, Settings, Sun, DollarSign, Shapes, ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MonthNavigation } from '@/components/finances/month-navigation';
 import { SummaryCardsContainer } from '@/components/finances/summary-cards';
@@ -51,6 +51,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale/pt-BR';
+
 
 const mapStoredToDisplayTransaction = (st: StoredTransaction): DisplayTransaction => ({
   id: st.id,
@@ -132,6 +135,7 @@ export default function DashboardPage() {
   
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   
   const [transactions, setTransactions] = useState<DisplayTransaction[]>([]);
   const [categories, setCategories] = useState<StoredCategory[]>([]);
@@ -163,26 +167,41 @@ export default function DashboardPage() {
     }
   }, [appSettings]);
   
-  const fetchDashboardData = useCallback(async (month: string, yearNum: number) => {
+  const fetchDashboardData = useCallback(async (month: string, yearNum: number, day: Date | null) => {
     if (!user) return;
     setLoadingData(true);
     try {
       const [fetchedTransactions, fetchedCategories] = await Promise.all([
-        getTransactions(user.uid, month, yearNum),
+        getTransactions(user.uid, month, yearNum, undefined, day),
         getCategories(user.uid)
       ]);
 
       setTransactions(fetchedTransactions.map(mapStoredToDisplayTransaction));
       setCategories(fetchedCategories);
 
-      let totalIncome = 0;
-      let totalExpenses = 0;
-      fetchedTransactions.forEach(t => {
-        if (t.type === 'income') totalIncome += t.value;
-        else totalExpenses += t.value;
-      });
-      const currentBalance = totalIncome - totalExpenses;
-      setSummaryData({ totalIncome, totalExpenses, currentBalance });
+      // Summary should still reflect the whole month, not just the day
+      if (!day) {
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        fetchedTransactions.forEach(t => {
+          if (t.type === 'income') totalIncome += t.value;
+          else totalExpenses += t.value;
+        });
+        const currentBalance = totalIncome - totalExpenses;
+        setSummaryData({ totalIncome, totalExpenses, currentBalance });
+      } else {
+        // When a day is selected, fetch the monthly data for the summary cards
+         const monthlyTransactions = await getTransactions(user.uid, month, yearNum, undefined, null);
+         let totalIncome = 0;
+         let totalExpenses = 0;
+         monthlyTransactions.forEach(t => {
+           if (t.type === 'income') totalIncome += t.value;
+           else totalExpenses += t.value;
+         });
+         const currentBalance = totalIncome - totalExpenses;
+         setSummaryData({ totalIncome, totalExpenses, currentBalance });
+      }
+
     } catch (error) {
       console.error(`Error fetching dashboard data for ${month}/${yearNum}:`, error);
       toast({ title: "Erro ao buscar dados do dashboard", variant: "destructive" });
@@ -196,13 +215,22 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (user && mounted && selectedMonth && selectedYear) {
-      fetchDashboardData(selectedMonth, selectedYear);
+      fetchDashboardData(selectedMonth, selectedYear, selectedDay);
     }
-  }, [user, mounted, selectedMonth, selectedYear, fetchDashboardData]);
+  }, [user, mounted, selectedMonth, selectedYear, selectedDay, fetchDashboardData]);
 
   const handleMonthChange = (month: string, year: number) => {
     setSelectedMonth(month);
     setSelectedYear(year);
+    setSelectedDay(null); // Clear day filter when month changes
+  };
+
+  const handleDayChange = (day: Date) => {
+    setSelectedDay(day);
+  };
+  
+  const clearDayFilter = () => {
+    setSelectedDay(null);
   };
   
   const [initialMonthSet, setInitialMonthSet] = useState(false);
@@ -219,14 +247,14 @@ export default function DashboardPage() {
   useEffect(() => {
     const handleFabTransactionAdded = () => {
       if (user && selectedMonth && selectedYear) {
-        fetchDashboardData(selectedMonth, selectedYear);
+        fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
     };
     window.addEventListener('transactionAddedByFab', handleFabTransactionAdded);
     return () => {
       window.removeEventListener('transactionAddedByFab', handleFabTransactionAdded);
     };
-  }, [user, selectedMonth, selectedYear, fetchDashboardData]);
+  }, [user, selectedMonth, selectedYear, selectedDay, fetchDashboardData]);
 
   const toggleTheme = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
 
@@ -279,7 +307,7 @@ export default function DashboardPage() {
       const updatedCategories = await getCategories(user.uid);
       setCategories(updatedCategories);
       if (selectedMonth && selectedYear) {
-        await fetchDashboardData(selectedMonth, selectedYear);
+        await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
       toast({ title: "Categoria Excluída" });
     } catch (error) {
@@ -293,7 +321,7 @@ export default function DashboardPage() {
     try {
       await addTransaction(user.uid, data);
       if (selectedMonth && selectedYear) {
-        await fetchDashboardData(selectedMonth, selectedYear);
+        await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
       setIsAddTransactionModalOpen(false);
       const toastDescription = data.isInstallment
@@ -318,7 +346,7 @@ export default function DashboardPage() {
     try {
       await updateTransaction(user.uid, id, data);
       if (selectedMonth && selectedYear) {
-        await fetchDashboardData(selectedMonth, selectedYear);
+        await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
       setEditingTransaction(null);
       setIsAddTransactionModalOpen(false);
@@ -339,7 +367,7 @@ export default function DashboardPage() {
     try {
       await deleteTransaction(user.uid, transactionIdToDelete);
       if (selectedMonth && selectedYear) {
-        await fetchDashboardData(selectedMonth, selectedYear);
+        await fetchDashboardData(selectedMonth, selectedYear, selectedDay);
       }
       toast({ title: "Movimentação Excluída" });
     } catch (error) {
@@ -377,7 +405,8 @@ export default function DashboardPage() {
       {/* Mobile Month Navigation - Moved to top for mobile */}
       <div className="md:hidden">
         <MonthNavigation 
-            onMonthChange={handleMonthChange} 
+            onMonthChange={handleMonthChange}
+            onDayChange={handleDayChange}
             currentSelectedMonth={selectedMonth}
             currentSelectedYear={selectedYear}
             centerMobileContent={manageCategoriesButtonMobile}
@@ -391,6 +420,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2">
             <MonthNavigation 
               onMonthChange={handleMonthChange} 
+              onDayChange={handleDayChange}
               currentSelectedMonth={selectedMonth}
               currentSelectedYear={selectedYear}
               showMobileGlobalControls={false}
@@ -453,7 +483,16 @@ export default function DashboardPage() {
       <div className="space-y-4 mb-6">
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-3xl font-headline text-foreground dark:text-foreground">Movimentações do Mês</h2>
+                 <h2 className="text-xl md:text-3xl font-headline text-foreground dark:text-foreground">
+                  {selectedDay 
+                    ? `Movimentações de ${format(selectedDay, "dd/MM/yyyy", { locale: ptBR })}` 
+                    : "Movimentações do Mês"}
+                </h2>
+                 {selectedDay && (
+                  <Button variant="ghost" size="icon" onClick={clearDayFilter} className="h-8 w-8" aria-label="Limpar filtro de dia">
+                    <X className="h-5 w-5 text-destructive" />
+                  </Button>
+                 )}
                  <Button
                     variant="ghost"
                     size="icon"
