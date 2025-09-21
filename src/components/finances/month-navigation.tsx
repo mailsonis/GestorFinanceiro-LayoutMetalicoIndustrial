@@ -29,7 +29,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar } from '../ui/calendar';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { addMonths, subMonths } from 'date-fns';
+import { addMonths, subMonths, startOfMonth } from 'date-fns';
 
 
 const months = [
@@ -120,14 +120,13 @@ export function MonthNavigation({
   
   const handleDateSelect = (date: Date | undefined) => {
     if(date){
-      setSelectedDate(date);
+      setSelectedDate(startOfMonth(date)); // Always set to the start of the month
       setIsCalendarOpen(false); // Close popover on selection
     }
   };
    
   const handleMonthSelect = (date: Date) => {
-    setSelectedDate(date);
-    setIsCalendarOpen(false);
+    setSelectedDate(startOfMonth(date)); // Also ensure month change sets to the start
   };
   
   const handlePreviousMonth = () => {
@@ -236,8 +235,8 @@ export function MonthNavigation({
               locale={ptBR}
               selected={selectedDate}
               onSelect={handleDateSelect}
-              onMonthChange={handleMonthSelect}
               defaultMonth={selectedDate}
+              onMonthChange={handleMonthSelect} 
               initialFocus
               captionLayout="dropdown-buttons"
               fromYear={new Date().getFullYear() - 10}
@@ -270,8 +269,8 @@ export function MonthNavigation({
             locale={ptBR}
             selected={selectedDate}
             onSelect={handleDateSelect}
-            onMonthChange={handleMonthSelect}
             defaultMonth={selectedDate}
+            onMonthChange={handleMonthSelect}
             initialFocus
             captionLayout="dropdown-buttons"
             fromYear={new Date().getFullYear() - 10}
@@ -325,7 +324,3 @@ export function MonthNavigation({
   // Desktop View
   return desktopMonthNavigationControls;
 }
-
-    
-
-    
