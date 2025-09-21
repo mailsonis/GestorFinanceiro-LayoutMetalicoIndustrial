@@ -226,7 +226,7 @@ export function AddTransactionModal({
           </div>
 
           <div>
-             <Label htmlFor="value">{isInstallment ? "Valor Total (R$)" : isFixedIncome ? "Valor Mensal (R$)" : "Valor (R$)"}</Label>
+             <Label htmlFor="value">{isInstallment ? "Valor da Parcela (R$)" : isFixedIncome ? "Valor Mensal (R$)" : "Valor (R$)"}</Label>
             <Input
               id="value"
               type="number"

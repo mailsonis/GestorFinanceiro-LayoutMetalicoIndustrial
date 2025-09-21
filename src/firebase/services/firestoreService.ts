@@ -138,7 +138,6 @@ export const addTransaction = async (userId: string, transactionData: Transactio
   if (transactionData.isInstallment && transactionData.installments && transactionData.installments >= 2) {
     // Installment logic
     const { description, value, type, categoryId, date, installments } = transactionData;
-    const installmentValue = parseFloat((value / installments).toFixed(2));
     const batch = writeBatch(db);
 
     for (let i = 0; i < installments; i++) {
@@ -150,7 +149,7 @@ export const addTransaction = async (userId: string, transactionData: Transactio
       const dataToStore = {
         userId,
         description: installmentDescription,
-        value: installmentValue,
+        value: value, // Use the installment value directly
         type,
         categoryId,
         date: formatISO(installmentDate, { representation: 'date' }),
@@ -323,5 +322,3 @@ export const addDefaultCategoriesForUser = async (userId: string): Promise<void>
 
   await batch.commit();
 };
-
-    
