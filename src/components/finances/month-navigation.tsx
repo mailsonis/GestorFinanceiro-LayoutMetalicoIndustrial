@@ -29,7 +29,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar } from '../ui/calendar';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { addMonths, subMonths, startOfMonth } from 'date-fns';
+import { addMonths, subMonths } from 'date-fns';
 
 
 const months = [
@@ -126,14 +126,10 @@ export function MonthNavigation({
     if(date){
       onDayChange(date);
       // We don't close calendar so user can see selection
-      // setIsCalendarOpen(false); 
+      setIsCalendarOpen(false); 
     }
   };
    
-  const handleMonthSelect = (date: Date) => {
-    setSelectedDate(startOfMonth(date)); // This will trigger onMonthChange effect
-  };
-  
   const handlePreviousMonth = () => {
     setSelectedDate(prev => subMonths(prev, 1));
   };
@@ -241,11 +237,7 @@ export function MonthNavigation({
               selected={currentSelectedDay || undefined}
               onSelect={handleDateSelect}
               defaultMonth={selectedDate}
-              onMonthChange={handleMonthSelect} 
               initialFocus
-              captionLayout="dropdown-buttons"
-              fromYear={new Date().getFullYear() - 10}
-              toYear={new Date().getFullYear() + 10}
             />
           </PopoverContent>
         </Popover>
@@ -265,7 +257,7 @@ export function MonthNavigation({
               className="h-12 w-12 shadow-md border-primary"
             >
               <CalendarIcon className="h-5 w-5" />
-               <span className="sr-only">Selecionar Mês</span>
+               <span className="sr-only">Selecionar Dia</span>
             </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="center">
@@ -275,11 +267,7 @@ export function MonthNavigation({
             selected={currentSelectedDay || undefined}
             onSelect={handleDateSelect}
             defaultMonth={selectedDate}
-            onMonthChange={handleMonthSelect}
             initialFocus
-            captionLayout="dropdown-buttons"
-            fromYear={new Date().getFullYear() - 10}
-            toYear={new Date().getFullYear() + 10}
           />
         </PopoverContent>
       </Popover>
