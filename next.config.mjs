@@ -1,8 +1,8 @@
 
-import type {NextConfig} from 'next';
 import withPWA from '@ducanh2912/next-pwa';
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
